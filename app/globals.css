@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base { * { @apply border-slate-200; } body { @apply bg-slate-50 text-slate-900 antialiased; } }
+@layer components { .card { @apply rounded-xl border bg-white shadow-sm; } .pill { @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold; } }
