@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, LogOut, Loader2 } from "lucide-react";
 import { NAV_ITEMS } from "./nav-config";
 import { NotificationBell } from "./notification-bell";
+import { ThemeToggle } from "./theme-toggle";
 import { useProfile } from "@/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -74,6 +75,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="hidden text-sm font-semibold text-primary sm:inline">Newway Agri</span>
           </div>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <NotificationBell />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
