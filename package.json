@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:rls": "node --env-file=.env.local ./node_modules/.bin/vitest run tests/rls.test.ts",
+    "seed:import": "node --env-file=.env.local --experimental-strip-types scripts/import-xlsx.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -51,6 +53,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.11"
   }
 }
