@@ -90,10 +90,18 @@ revoke execute on function custom_access_token_hook from authenticated, anon, pu
 -- ---------------------------------------------------------------------------
 -- JWT claim helpers used throughout RLS policies
 -- ---------------------------------------------------------------------------
+-- security definer + a fixed search_path: the `profiles` fallback lookup
+-- below must bypass RLS, because `profiles`'s own SELECT policy calls
+-- is_internal() -> jwt_role() -> this function. Without security definer
+-- that fallback recurses into itself (and blows the stack) the moment a
+-- caller's JWT doesn't carry app_metadata.role yet (e.g. right after signup,
+-- before the custom access-token hook has run once).
 create or replace function jwt_role()
 returns text
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select coalesce(
     (auth.jwt() -> 'app_metadata' ->> 'role'),
@@ -106,6 +114,8 @@ create or replace function jwt_client_id()
 returns uuid
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select coalesce(
     (auth.jwt() -> 'app_metadata' ->> 'client_id')::uuid,
@@ -340,3 +350,10 @@ begin
     );
 end;
 $$;
+
+-- Only the daily-digest Edge Function (calling with the service role key)
+-- should be able to trigger this system-wide batch job — not any signed-in
+-- Team/Client user via supabase.rpc(). Postgres grants EXECUTE to PUBLIC by
+-- default on new functions, so this has to be revoked explicitly.
+revoke execute on function run_daily_digest from public, authenticated, anon;
+grant execute on function run_daily_digest to service_role;

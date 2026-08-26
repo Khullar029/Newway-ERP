@@ -291,7 +291,12 @@ create index idx_profiles_client on profiles(client_id);
 -- ---------------------------------------------------------------------------
 -- Views
 -- ---------------------------------------------------------------------------
-create view client_finance_summary as
+-- security_invoker: without it, a view runs with its owner's privileges and
+-- silently bypasses RLS on the underlying tables for every caller — this
+-- view would otherwise leak every client's financials to any signed-in user.
+create view client_finance_summary
+with (security_invoker = true)
+as
 select
   c.id as client_id,
   c.name as client_name,

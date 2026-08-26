@@ -48,6 +48,15 @@ describe("RLS client isolation", () => {
     expect(data).toHaveLength(1);
   });
 
+  it("the client_finance_summary view is scoped per caller, not the view owner's privileges", async () => {
+    // Regression test: views default to running with the view owner's
+    // privileges unless created `with (security_invoker = true)`, which
+    // silently bypasses RLS on the underlying tables for every caller.
+    const { data } = await fx.clientAAnon.from("client_finance_summary").select("client_id");
+    expect(data?.map((r) => r.client_id)).not.toContain(fx.clientBId);
+    expect(data).toHaveLength(1);
+  });
+
   it("a client user cannot write another client's task (RLS write policy requires internal role)", async () => {
     const { error, data } = await fx.clientAAnon
       .from("tasks")
