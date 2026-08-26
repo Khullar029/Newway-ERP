@@ -46,7 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       {/* Desktop sidebar */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-card md:flex">
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-card md:flex print:hidden">
         <SidebarContent items={items} pathname={pathname} />
       </aside>
 
@@ -66,7 +66,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-3 sm:px-5">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-3 sm:px-5 print:hidden">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(true)}>
               <Menu />
