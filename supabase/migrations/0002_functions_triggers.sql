@@ -58,10 +58,17 @@ create trigger trg_on_auth_user_created
 --   Authentication > Hooks > Customize Access Token (JWT) Claims hook
 --   -> select function `public.custom_access_token_hook`
 -- ---------------------------------------------------------------------------
+-- security definer: this runs as `supabase_auth_admin` (the Auth service's
+-- own Postgres role), which has neither a table grant on `public.profiles`
+-- nor an RLS bypass — and it must read an arbitrary user's row (the one
+-- logging in), not its own, so RLS couldn't apply here anyway. Without
+-- security definer, every login fails with "Error running hook URI".
 create or replace function custom_access_token_hook(event jsonb)
 returns jsonb
 language plpgsql
 stable
+security definer
+set search_path = public
 as $$
 declare
   claims jsonb;
